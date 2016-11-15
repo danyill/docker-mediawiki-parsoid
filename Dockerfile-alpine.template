@@ -18,6 +18,7 @@ RUN addgroup -S node \
         make \
         python \
         tar \
+        git \
   && for key in \
     9554F04D7259F04124DE6B476D5A82AC7E37093B \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -39,9 +40,14 @@ RUN addgroup -S node \
     && ./configure \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
-    && apk del .build-deps \
     && cd .. \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.gz" SHASUMS256.txt.asc SHASUMS256.txt
 
-CMD [ "node" ]
+RUN npm install -g parsoid && apk del .build-deps
+
+COPY config.yaml /usr/local/lib/node_modules/parsoid/config.yaml
+
+WORKDIR /usr/local/lib/node_modules/parsoid/
+
+CMD node bin/server.js
