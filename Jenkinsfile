@@ -15,7 +15,7 @@ node{
   }
   stage('Build') {
     echo "Building PHP-FPM with docker.build(${maintainer_name}/${container_name}:${build_tag})"
-    container = docker.build("${maintainer_name}/${container_name}:${build_tag}", '7.0/fpm/alpine')
+    container = docker.build("${maintainer_name}/${container_name}:${build_tag}", '6.9/alpine/')
   }
   stage('Test') {
     try {
