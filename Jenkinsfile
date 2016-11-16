@@ -6,7 +6,7 @@ maintainer_name = "rlewkowicz"
 container_name = "parsoid"
 node{
   retry( count: 3  ){
-    timeout(time: 15, unit: 'SECONDS') {
+    timeout(time: 60, unit: 'SECONDS') {
       stage('Pull and Update') {
         git url: 'https://github.com/rlewkowicz/docker-mediawiki-parsoid.git'
         sh './update.sh'
