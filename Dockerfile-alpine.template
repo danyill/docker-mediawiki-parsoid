@@ -50,4 +50,6 @@ COPY config.yaml /usr/local/lib/node_modules/parsoid/config.yaml
 
 WORKDIR /usr/local/lib/node_modules/parsoid/
 
+EXPOSE 8000
+
 CMD node bin/server.js
