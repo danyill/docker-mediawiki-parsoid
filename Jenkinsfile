@@ -21,24 +21,12 @@ node{
     try {
 
       docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name} -d -p 127.0.0.1:8500:8000")  { c ->
-
-         waitUntil {
-             wait_results = sh([script: $/docker logs ${container_name} | grep "Startup finished"/$, returnStdout: true])
-
-             echo "Wait Results(${wait_results})"
-             if ("${wait_results}" == "0")
-             {
-                 echo "Parsoid is listening on port 8000"
-                 return true
-             }
-             else
-             {
-                 echo "Parsoid is not listening yet"
-                 return false
-             }
+        timeout(time: 60, unit: 'SECONDS'){
+           waitUntil {
+               def wait = sh([script: $/docker logs ${container_name} | grep "Startup finished"/$, returnStatus: true])
+               return (wait == 0);
+           }
          }
-
-         echo "Parsoid is running"
 
          MAX_TESTS = 2
          for (test_num = 0; test_num < MAX_TESTS; test_num++) {
