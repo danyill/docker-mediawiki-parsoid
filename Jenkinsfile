@@ -52,14 +52,20 @@ node{
              {
                  test_results = sh([script: "curl -s 127.0.0.1:8500 | grep -o 'Welcome to the Parsoid web service'", returnStatus:true])
                  build_tag = sh([script: $/curl -s https://www.npmjs.com/package/parsoid | grep strong | grep -o "[0-9]*\.[0-9]*\.[0-9]*"/$, returnStdout: true])
-                 expected_results = 0
+                 if (test_results != 0){
+                   currentBuild.result = 'FAILURE'
+                   error "Failed to finish container testing. Parsoid Not running"
+                 }
              }
              else if (test_num == 1)
              {
                  // Test that port 80 is exposed
                  echo "Exposed Docker Ports:"
                  test_results = sh([script: "docker inspect --format '{{ (.NetworkSettings.Ports) }}' ${container_name} | grep map | grep '8000/tcp:'", returnStatus:true])
-                 expected_results = 0
+                 if (test_results != 0){
+                   currentBuild.result = 'FAILURE'
+                   error "Failed to finish container testing. Ports not exposed"
+                 }
              }
              else
              {
@@ -67,12 +73,6 @@ node{
                  echo "ERROR: ${err_msg}"
                  currentBuild.result = 'FAILURE'
                  error "Failed to finish container testing with Message(${err_msg})"
-             }
-
-             // Now validate the results match the expected results
-             stage ("Test(${test_num}) - Validate Results"){
-               echo "Done Running Test(${test_num})"
-               if (test_results != expected_results){ currentBuild.result = 'FAILURE' }
              }
          }
       }
@@ -88,5 +88,6 @@ node{
     container.tag([build_tag])
     container.push([build_tag])
     echo "Pushed Build ${build_tag}"
+    currentBuild.result = 'SUCCESS'
   }
 }
