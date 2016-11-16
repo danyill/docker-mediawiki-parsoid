@@ -20,7 +20,7 @@ node{
   stage('Test') {
     try {
 
-      docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name} -d -p 127.0.0.1:8500:8000", "php -S 0.0.0.0:8000 -t / /phpinfo.php" )  { c ->
+      docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name} -d -p 127.0.0.1:8500:8000")  { c ->
 
          waitUntil {
              sh "docker exec -t ${container_name} netstat -apn | grep 8000 | grep LISTEN | wc -l | tr -d '\n' > /tmp/wait_results"
