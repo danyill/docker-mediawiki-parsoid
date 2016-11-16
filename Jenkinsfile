@@ -23,14 +23,12 @@ node{
       docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name} -d -p 127.0.0.1:8500:8000")  { c ->
 
          waitUntil {
-             sh "docker exec -t ${container_name} netstat -apn | grep 8000 | grep LISTEN | wc -l | tr -d '\n' > /tmp/wait_results"
-             wait_results = readFile '/tmp/wait_results'
+             wait_results = sh([script: $/docker logs ${container_name} | grep "Startup finished"/$, returnStdout: true])
 
              echo "Wait Results(${wait_results})"
-             if ("${wait_results}" == "1")
+             if ("${wait_results}" == "0")
              {
                  echo "Parsoid is listening on port 8000"
-                 sh "rm -f /tmp/wait_results"
                  return true
              }
              else
