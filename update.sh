@@ -18,6 +18,8 @@ function update_node_version {
 	(
 		cp $template $dockerfile
 		sed -E -i.bak 's/^(ENV NODE_VERSION |FROM node:).*/\1'"$version.$fullVersion"'/' "$dockerfile"
+		#putting this here cause im terrible
+		sed -E -i.bak "s/$RANDOM/RANDOM_NUMBER/" "$dockerfile"
 		rm "$dockerfile.bak"
 
 		# Don't set npm log level in 0.10 and 0.12.
