@@ -73,6 +73,8 @@ node{
     echo "Current Build ${build_tag}"
     container.tag([build_tag])
     container.push([build_tag])
+    container.tag(['latest'])
+    container.push(['latest'])
     echo "Pushed Build ${build_tag}"
     currentBuild.result = 'SUCCESS'
   }
